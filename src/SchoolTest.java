@@ -79,7 +79,7 @@ public class SchoolTest {
 
 
 
-    private School getBudgetMenu(){
+    private void getBudgetMenu(){
 
         School school = new School(ioFileOperations.readStudents(), ioFileOperations.readTeachers());
 
@@ -114,7 +114,6 @@ public class SchoolTest {
                     break;
             }
         }
-        return school;
     }
 
     private void exportStudentListOrderedAlphabetically(List<Student> students){
