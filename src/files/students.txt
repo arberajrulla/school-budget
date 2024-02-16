@@ -1,3 +1,4 @@
-1 qwre 659.0
-3 Stud3 0.0
-4 Stud4 0.0
+1,Student 1,0.0
+2,Student 2,5000.0
+3,,0.0
+4,Aaar,0.0

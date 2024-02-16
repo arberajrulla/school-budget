@@ -55,18 +55,21 @@ public class SchoolTest {
             int option = scanner.nextInt();
             switch (option) {
                 case 1:
+                    System.out.println("The list of Teachers:");
                     ioFileOperations.readTeachers().forEach(teacher -> System.out.println(teacher));
                     break;
                 case 2:
                     ioFileOperations.addTeacher();
                     break;
                 case 3:
+                    System.out.println("The list of Students:");
                     ioFileOperations.readStudents().forEach(student -> System.out.println(student));
                     break;
                 case 4:
                     ioFileOperations.addStudent();
                     break;
                 case 5:
+                    System.out.println("The list of Subjects:");
                     ioFileOperations.readSubjects().forEach(subject -> System.out.println(subject));
                     break;
                 case 6:
