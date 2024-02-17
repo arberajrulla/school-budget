@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.List;
 
 public class School {
@@ -44,7 +45,18 @@ public class School {
 
     public void addTeacher(Teacher newTeacher){
         if (newTeacher != null){
-            teachers.add(newTeacher);
+            if (teachers != null){
+                for (Teacher teacher : teachers){
+                    if (teacher.getId() == newTeacher.getId()){
+                        System.err.println("Teacher already exists in the list!");
+                        return;
+                    }
+                }
+                teachers.add(newTeacher);
+            }else {
+                teachers = new ArrayList<>();
+                teachers.add(newTeacher);
+            }
         } else {
             System.err.println("Teacher can not be null!");
         }
@@ -52,9 +64,20 @@ public class School {
 
     public void addStudent(Student newStudent){
         if (newStudent != null){
-            students.add(newStudent);
+            if (students != null){
+                for (Student student : students){
+                    if (student.getId() == newStudent.getId()){
+                        System.err.println("Student already exists in the list!");
+                        return;
+                    }
+                }
+                students.add(newStudent);
+            }else {
+                students = new ArrayList<>();
+                students.add(newStudent);
+            }
         } else {
-            System.err.println("Teacher can not be null!");
+            System.err.println("Student can not be null!");
         }
     }
 

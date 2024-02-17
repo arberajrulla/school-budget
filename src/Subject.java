@@ -55,8 +55,8 @@ public class Subject {
         }
         return "Subject: " +
                 "Id=" + id +
-                ", Name='" + name + '\'' +
-                ", Teacher=" + teacher +
-                ", StudentList: [" + studentsListString + "]";
+                ", Name=" + name +
+                ", Teacher: [" + teacher +
+                "], StudentList: [" + studentsListString + "]";
     }
 }

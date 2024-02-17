@@ -39,7 +39,11 @@ public class Student {
     }
 
     public void payFee(double amount){
-        feesPaid += amount;
+        if (amount < 0){
+            System.err.println("Amount to add can not be negative!");
+        }else {
+            feesPaid += amount;
+        }
     }
 
 

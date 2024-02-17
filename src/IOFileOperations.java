@@ -41,7 +41,7 @@ public class IOFileOperations {
                 }
             }
             List<Student> allStudents = readStudents();
-            List<Student> subjectStudents = readStudents();
+            List<Student> subjectStudents = new ArrayList<>();
             for (int i = 3; i < row.length; i++){
                 for (Student student : allStudents){
                     if (Integer.parseInt(row[i]) == student.getId()){
@@ -77,18 +77,23 @@ public class IOFileOperations {
         boolean key = true;
         while(key){
             int id = generateId(rows);
-            scanner.nextLine();
             System.out.println("Please enter the name of the teacher:");
             String name = scanner.nextLine();
-
-            System.out.println("Please enter the salary of the teacher(decimal number):");
-            if (scanner.hasNextDouble()){
-                double salary = scanner.nextDouble();
-                writeNewLineOnFile(System.getProperty("user.dir") + "/src/files/teachers.txt", new String[]{String.valueOf(id), name, String.valueOf(salary)});
-                System.out.println("Teacher registered successfully!\n");
-                key = false;
-            } else {
-                System.err.println("Salary must be a decimal value!");
+            if (name.isEmpty()){
+                System.err.println("Name can not be empty!");
+            }else{
+                System.out.println("Please enter the salary of the teacher:");
+                while(key){
+                    if (scanner.hasNextDouble()){
+                        double salary = scanner.nextDouble();
+                        writeNewLineOnFile(System.getProperty("user.dir") + "/src/files/teachers.txt", new String[]{String.valueOf(id), name, String.valueOf(salary)});
+                        System.out.println("Teacher registered successfully!\n");
+                        key = false;
+                    } else {
+                        scanner.nextLine();
+                        System.err.println("Salary must be a numeric value!");
+                    }
+                }
             }
         }
     }
@@ -96,11 +101,18 @@ public class IOFileOperations {
     public void addStudent(){
         List<String[]> rows = readFromFile(System.getProperty("user.dir") + "/src/files/students.txt");
         int id = generateId(rows);
-        scanner.nextLine();
-        System.out.println("Please enter the name of the student: ");
-        String name = scanner.nextLine();
-        writeNewLineOnFile(System.getProperty("user.dir") + "/src/files/students.txt", new String[]{String.valueOf(id), name, String.valueOf(0.0)});
-        System.out.println("Student registered successfully!");
+        boolean key = true;
+        while(key) {
+            System.out.println("Please enter the name of the student: ");
+            String name = scanner.nextLine();
+            if (name.isEmpty()) {
+                System.err.println("Name can not be empty!");
+            } else {
+                writeNewLineOnFile(System.getProperty("user.dir") + "/src/files/students.txt", new String[]{String.valueOf(id), name, String.valueOf(0.0)});
+                System.out.println("Student registered successfully!\n");
+                key = false;
+            }
+        }
     }
 
     public void addSubject(){
@@ -109,23 +121,30 @@ public class IOFileOperations {
         List<String[]> teachers = readFromFile(System.getProperty("user.dir") + "/src/files/teachers.txt");
 
         int id = generateId(rows);
-        System.out.println("Please enter the name of the subject:");
-        String name = scanner.nextLine();
+        boolean key = true;
+        while(key) {
+            System.out.println("Please enter the name of the subject:");
+            String name = scanner.nextLine();
+            if (name.isEmpty()) {
+                System.err.println("Name can not be empty!");
+            } else {
+                int selectedTeacherId = getSelectedTeacherId(teachers);
+                List<String> selectedStudents = getSelectedStudentsIds(students);
 
-        int selectedTeacherId = getSelectedTeacherId(teachers);
-        List<String> selectedStudents = getSelectedStudentsIds(students);
-
-        String[] newSubject = new String[selectedStudents.size() + 3];
-        newSubject[0] = String.valueOf(id);
-        newSubject[1] = name;
-        newSubject[2] = String.valueOf(selectedTeacherId);
-        int index = 3;
-        for (String studentId : selectedStudents){
-            newSubject[index] = studentId;
-            index++;
+                String[] newSubject = new String[selectedStudents.size() + 3];
+                newSubject[0] = String.valueOf(id);
+                newSubject[1] = name;
+                newSubject[2] = String.valueOf(selectedTeacherId);
+                int index = 3;
+                for (String studentId : selectedStudents) {
+                    newSubject[index] = studentId;
+                    index++;
+                }
+                writeNewLineOnFile(System.getProperty("user.dir") + "/src/files/subjects.txt", newSubject);
+                System.out.println("Subject registered successfully!\n");
+                key = false;
+            }
         }
-        writeNewLineOnFile(System.getProperty("user.dir") + "/src/files/subjects.txt", newSubject);
-        System.out.println("Subject registered successfully!\n");
     }
 
 
@@ -144,6 +163,7 @@ public class IOFileOperations {
                     System.err.println("Teacher with this id does not exist!");
                 }
             } else {
+                scanner.nextLine();
                 System.err.println("Please enter numeric value!");
             }
         }
@@ -163,13 +183,19 @@ public class IOFileOperations {
                 if (selectedStudentsId == 0){
                     stopValue = 0;
                 } else if (existsId(selectedStudentsId, students)){
-                    selectedStudents.add(String.valueOf(selectedStudentsId));
-                    System.out.println(String.format("Student with id %s added successfully!", selectedStudentsId));
+                    //check if the student is already selected
+                    if (!isStudentAlreadySelected(selectedStudentsId, selectedStudents)){
+                        selectedStudents.add(String.valueOf(selectedStudentsId));
+                        System.out.println(String.format("Student with id %s added successfully!", selectedStudentsId));
+                    } else {
+                        System.err.println("You have already added this student!");
+                    }
                 } else {
                     System.err.println("Please enter a correct student id");
                 }
             } else {
-                System.out.println("Please enter only numeric value!");
+                scanner.nextLine();
+                System.err.println("Please enter only numeric value!");
             }
         }
         return selectedStudents;
@@ -178,6 +204,15 @@ public class IOFileOperations {
     private boolean existsId(int id, List<String[]> objects){
         for (String[] object : objects){
             if (Integer.parseInt(object[0]) == id){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean isStudentAlreadySelected(int id, List<String> selectedStudents){
+        for (String selectedId : selectedStudents){
+            if (id == Integer.parseInt(selectedId)){
                 return true;
             }
         }
@@ -220,10 +255,10 @@ public class IOFileOperations {
         File file = new File(System.getProperty("user.dir") + "/src/files/student.text");
         try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(file))) {
             for (Student student : students ){
-                bufferedWriter.write(String.join(",", String.valueOf(student.getId()), student.getName(), String.valueOf(student.getFeesPaid())));
+                bufferedWriter.write(String.join(",", String.valueOf(student.getId()), student.getName(), String.valueOf(student.getFeesPaid()) + "$"));
                 bufferedWriter.newLine();
             }
-            System.out.println("List exported successfully!");
+            System.out.println("List exported successfully!\n");
         } catch (IOException e) {
             e.printStackTrace();
         }
